@@ -1,0 +1,12 @@
+webrick:
+  build: .
+  privileged: true
+  environment:
+    - WEBHOOK_URL_PREFIX=build
+    - USER_GID=${GID}
+  ports:
+    - 7890/tcp:8000/tcp
+  volumes:
+      # mounts container docker to the host docker
+    - /var/run/docker.sock:/var/run/docker.sock
+    - ${HOME}/Development:/Development

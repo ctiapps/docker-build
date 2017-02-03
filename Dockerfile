@@ -1,0 +1,41 @@
+# vim:set ft=dockerfile:
+FROM alpine:3.5
+
+MAINTAINER Andrius Kairiukstis <andrius@kairiukstis.com>
+
+ENV DOCKER_COMPOSE_VERSION 1.10.0
+
+RUN apk --update add \
+      git \
+      docker \
+      py-pip \
+      py-yaml \
+      wget \
+      ruby \
+      libressl \
+      ca-certificates \
+      build-base \
+      ruby-dev \
+\
+&& pip install -U docker-compose==${DOCKER_COMPOSE_VERSION} \
+\
+&& gem install --no-rdoc --no-ri \
+     sinatra \
+     json \
+\
+&& gem clean \
+&& rm -rf /usr/lib/ruby/gems/*/cache/* \
+&& rm -rf `find / -regex '.*\.py[co]'` \
+&& apk del \
+     wget \
+     build-base \
+     ruby-dev \
+&& rm -rf /var/cache/apk/* /tmp/* /var/tmp/*
+
+ADD run.sh     /run.sh
+ADD server.rb  /server.rb
+
+EXPOSE 8000
+
+ENTRYPOINT ["/run.sh"]
+
